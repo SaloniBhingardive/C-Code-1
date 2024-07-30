@@ -1,0 +1,76 @@
+#include <iostream>
+#include <vector>
+
+struct Course {
+    std::string name;
+    int credits;
+    char grade;
+};
+
+float gradeToPoint(char grade) {
+    switch (grade) {
+        case 'A': return 10.0;
+        case 'B': return 8.0;
+        case 'C': return 6.0;
+        case 'D': return 4.0;
+        case 'E': return 2.0;
+        case 'F': return 0.0;
+        default: return 0.0;
+    }
+}
+
+float calculateGPA(const std::vector<Course>& courses) {
+    float totalPoints = 0;
+    int totalCredits = 0;
+    
+    for (const auto& course : courses) {
+        float gradePoints = gradeToPoint(course.grade);
+        totalPoints += gradePoints * course.credits;
+        totalCredits += course.credits;
+    }
+    
+    return totalCredits ? totalPoints / totalCredits : 0;
+}
+
+int main() {
+    int numSemesters;
+    std::cout << "Enter the number of semesters: ";
+    std::cin >> numSemesters;
+
+    std::vector<std::vector<Course>> allSemesters(numSemesters);
+
+    for (int i = 0; i < numSemesters; ++i) {
+        int numCourses;
+        std::cout << "Enter the number of courses for semester " << (i + 1) << ": ";
+        std::cin >> numCourses;
+
+        allSemesters[i].resize(numCourses);
+
+        for (int j = 0; j < numCourses; ++j) {
+            std::cout << "Enter course " << (j + 1) << " name: ";
+            std::cin >> allSemesters[i][j].name;
+            std::cout << "Enter course " << (j + 1) << " credits: ";
+            std::cin >> allSemesters[i][j].credits;
+            std::cout << "Enter course " << (j + 1) << " grade (A, B, C, D, E, F): ";
+            std::cin >> allSemesters[i][j].grade;
+        }
+    }
+
+    float totalPoints = 0;
+    int totalCredits = 0;
+
+    for (const auto& semester : allSemesters) {
+        float gpa = calculateGPA(semester);
+        std::cout << "GPA for this semester: " << gpa << std::endl;
+
+        for (const auto& course : semester) {
+            totalPoints += gradeToPoint(course.grade) * course.credits;
+            totalCredits += course.credits;
+        }
+    }
+
+    float cgpa = totalCredits ? totalPoints / totalCredits : 0;
+    std::cout << "Cumulative Grade Point Average (CGPA): " << cgpa << std::endl;
+
+    return 0;
+}
